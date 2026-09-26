@@ -1,14 +1,12 @@
 # A graph neural network decoder for the surface code
 
-A from-scratch reimplementation of the data-driven decoding idea of
+This project consist of a simplified reimplementation of the data-driven decoding idea of
 [Lange et al., *Data-driven decoding of quantum error correcting codes using graph
-neural networks*](https://arxiv.org/abs/2307.01241), trained on simulated data only,
-on a laptop CPU.
+neural networks*](https://arxiv.org/abs/2307.01241), trained on simulated data only generated using the Stim
+library 
 
-**Result.** On the distance-3 rotated surface code with circuit-level noise, a
-124k-parameter GNN decodes better than minimum-weight perfect matching, even though
-matching is handed the exact noise model and the network only ever sees measurement
-outcomes.
+**Result.** The main goal of this project is to demonstrate the advantage of Graph Neural Network in decoding distance-3 rotated surface code, with circuit-level noise, with respect to minimum-weight perfect matching (MWPM). 
+
 
 | decoder | logical error rate at p = 0.005 |
 |---|---|
