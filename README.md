@@ -25,7 +25,7 @@ GNN right, MWPM wrong : 9238
 GNN wrong, MWPM right : 5517
 
 ```
-corresponding to z = 30.6 and a p-value of O($10^-206$). 
+corresponding to z = 30.6 and a p-value of O($10^(-206)$). 
 
 In order to test the generalition power of the GNN, additional tests are performed generating two additional test samples with p = 0.007 and
 p = 0.010. The overall performances for different values of p are here listed:
