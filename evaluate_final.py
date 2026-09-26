@@ -11,6 +11,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import torch
 
 from torch_geometric.loader import DataLoader
@@ -133,27 +134,60 @@ def main():
     df = pd.DataFrame(rows)
     df.to_csv("results/final_comparison.csv", index=False)
 
-    # ---------- plot ----------
-    fig, ax = plt.subplots(figsize=(6, 4.5))
+    
+
+    # --- 1. Impostazioni Stile LHCb ---
+    mpl.rcParams.update({
+        'font.family': 'serif',
+        'font.size': 18,               # Dimensione base del font
+        'axes.labelsize': 24,          # Label degli assi molto grandi
+        'axes.titlesize': 20,
+        'xtick.labelsize': 18,
+        'ytick.labelsize': 18,
+        'legend.fontsize': 16,
+        'axes.linewidth': 1.5,         # Bordi del grafico più spessi
+        'xtick.direction': 'in',       # Ticks verso l'interno
+        'ytick.direction': 'in',
+        'xtick.top': True,             # Ticks anche sopra
+        'ytick.right': True,           # Ticks anche a destra
+    })
+
+    # Creazione della figura (leggermente più grande per accomodare i font larghi)
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # --- 2. Plot dei dati (capsize=0 per stile HEP) ---
     ax.errorbar(df["p"], df["mwpm"], yerr=df["mwpm_err"],
-                marker="o", capsize=3, label="MWPM (knows the noise model)")
+            marker="o", linestyle="-", capsize=0, 
+            label="MWPM (knows the noise model)")
+
     ax.errorbar(df["p"], df["gnn"], yerr=df["gnn_err"],
-                marker="s", capsize=3, label="GNN (data only)")
-    ax.axvspan(min(CURVE_PROBABILITIES), 0.005, alpha=0.08, color="green")
-    ax.text(0.0035, ax.get_ylim()[1] * 0.05, "training range",
-            ha="center", fontsize=8, color="green")
+            marker="s", linestyle="-", capsize=0, 
+            label="GNN ")
+
+    # --- 3. Scale, Label e Titolo ---
     ax.set_xscale("log")
     ax.set_yscale("log")
-    ax.set_xlabel("physical error rate $p$")
-    ax.set_ylabel("logical error rate")
+
+    ax.set_xlabel("Physical error rate $p$")
+    ax.set_ylabel("Logical error rate")
     ax.set_title(f"Surface code d={CODE_DIMENSION}, {ROUND} rounds, circuit-level noise")
-    ax.legend()
-    ax.grid(alpha=0.3, which="both")
+
+    # --- 4. Ticks minori e Legenda ---
+    # Imposta lo stile anche per i ticks minori (fondamentali nei plot logaritmici)
+    ax.tick_params(which='both', direction='in', top=True, right=True, width=1.2)
+    ax.tick_params(which='major', length=8)
+    ax.tick_params(which='minor', length=4)
+
+    # Legenda senza bordo (standard LHCb)
+    ax.legend(frameon=False)
+
+    # ax.grid() è stato rimosso
+    # ax.axvspan e ax.text (highlight del training) sono stati rimossi
+
     fig.tight_layout()
-    fig.savefig("results/final_comparison.png", dpi=150)
+    fig.savefig("results/final_comparison.png", dpi=300) # dpi 300 per qualità da paper
 
     print("\nsaved results/final_comparison.csv and results/final_comparison.png")
-
 
 if __name__ == "__main__":
     main()
