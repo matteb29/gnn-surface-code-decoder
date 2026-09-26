@@ -1,0 +1,9 @@
+# generated data — regenerate with generate_data.py
+data/
+
+# papers and lecture notes: copyrighted, not mine to redistribute
+resources/
+
+__pycache__/
+*.pyc
+.DS_Store
