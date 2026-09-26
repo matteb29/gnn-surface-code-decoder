@@ -14,11 +14,11 @@ library with p ≤ 0.005.
 | MWPM (PyMatching, exact noise model) | 0.01728 ± 0.00009 |
 | **GNN (this work, data only)** | **0.01542 ± 0.00009** |
 
-Using 2,000,000 test experiments with identical shots for both decoders the GNN presents an improvement of **10.8%**, despite beeing trained using
-only the measurement outcomes and knowing nothing about the noise model that MWPM uses.
+Using 2'000'000 test experiments, with identical shots for both decoders, the GNN presents an improvement of **10.8%**, despite beeing trained using
+only the measurement outcomes and knowing nothing about the noise model that MWPM implements.
 
 
-In addition the McNemar's significance test is applied to the results:
+In addition a McNemar's significance test is applied to the results:
 
 ```
 GNN right, MWPM wrong : 9238
@@ -28,7 +28,7 @@ GNN wrong, MWPM right : 5517
 corresponding to z = 30.6 and a p-value of O($10^(-206)$). 
 
 In order to test the generalition power of the GNN, additional tests are performed generating two additional test samples with p = 0.007 and
-p = 0.010. The overall performances for different values of p are here listed:
+p = 0.010. The overall performances, for different values of p, are here presented:
 
 | p | MWPM | GNN | Improvement |
 |---|---|---|---|
@@ -69,15 +69,16 @@ network, and kept in the denominator so the numbers stay comparable with MWPM.
 
 In this repository you can find the following scripts:
 
- `generate_data.py` | builds the Stim circuit and samples detectors, observables, coordinates 
- `baseline.py` | MWPM decoder via PyMatching, plus the "always predict 0" floor 
- `create_graphs.py` | one experiment → one `torch_geometric` graph (kNN edges, 1/distance weights) 
- `model.py` | hand-written message passing layer, mean pooling, GNN 
- `trainer.py` | training loop with fresh data each epoch 
- `evaluate.py` | logical error rate of a model, comparable with the baseline 
- `evaluate_final.py` | both decoders on identical shots, McNemar test, curve over p 
+- `generate_data.py` | builds the Stim circuit and samples detectors, observables, coordinates 
+- `baseline.py` | MWPM decoder via PyMatching, plus the "always predict 0" floor 
+- `create_graphs.py` | one experiment → one `torch_geometric` graph (kNN edges, 1/distance weights) 
+- `model.py` | hand-written message passing layer, mean pooling, GNN 
+- `trainer.py` | training loop with fresh data each epoch 
+- `evaluate.py` | logical error rate of a model, comparable with the baseline 
+- `evaluate_final.py` | both decoders on identical shots, McNemar test, curve over p 
 
-```Useful bash commands
+Useful bash commands
+```
 pip install stim pymatching torch torch_geometric pandas matplotlib
 python baseline.py          # MWPM reference numbers
 python trainer.py           # ~50 epochs, writes results/best_model.pt
