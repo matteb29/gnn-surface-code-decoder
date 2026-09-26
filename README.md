@@ -2,7 +2,7 @@
 
 This project consist of a simplified reimplementation of the data-driven decoding idea of
 [Lange et al., *Data-driven decoding of quantum error correcting codes using graph
-neural networks*](https://arxiv.org/abs/2307.01241), trained on simulated data only generated using the Stim 
+neural networks*](https://arxiv.org/abs/2307.01241), trained on simulated data generated using the Stim 
 library with p ≤ 0.005.
 
 **Result.** The main goal of this project is to demonstrate the advantage of Graph Neural Network in decoding distance-3 rotated surface code, with circuit-level noise, with respect to minimum-weight perfect matching (MWPM). 
