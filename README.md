@@ -2,23 +2,23 @@
 
 This project consist of a simplified reimplementation of the data-driven decoding idea of
 [Lange et al., *Data-driven decoding of quantum error correcting codes using graph
-neural networks*](https://arxiv.org/abs/2307.01241), trained on simulated data only generated using the Stim
-library 
+neural networks*](https://arxiv.org/abs/2307.01241), trained on simulated data only generated using the Stim 
+library with p ≤ 0.005.
 
 **Result.** The main goal of this project is to demonstrate the advantage of Graph Neural Network in decoding distance-3 rotated surface code, with circuit-level noise, with respect to minimum-weight perfect matching (MWPM). 
 
 
-| decoder | logical error rate at p = 0.005 |
+| Decoder | Logical error rate (p = 0.005) |
 |---|---|
-| no decoder (always predict "no flip") | 0.1040 ± 0.0007 |
+| No decoder | 0.1040 ± 0.0007 |
 | MWPM (PyMatching, exact noise model) | 0.01728 ± 0.00009 |
 | **GNN (this work, data only)** | **0.01542 ± 0.00009** |
 
-2,000,000 test experiments, identical shots for both decoders.
-Relative improvement **10.8%**.
+Using 2,000,000 test experiments with identical shots for both decoders the GNN presents an improvement **10.8%**, despite beeing trained using
+only the measurement outcomes.
 
-Because both decoders run on the same experiments, the comparison is paired, so the
-right significance test is McNemar's:
+
+In addition the McNemar's significance test is applied to the results:
 
 ```
 GNN right, MWPM wrong : 9238
@@ -26,10 +26,10 @@ GNN wrong, MWPM right : 5517
 z = 30.6        p = 4e-206
 ```
 
-The improvement survives outside the training range (the network was only ever
-trained at p ≤ 0.005):
+In order to test the generalition power of the GNN, additional tests are performed generating two additional test samples with p = 0.007 and
+p = 0.010. The overall performances for different values of p are here listed:
 
-| p | MWPM | GNN | improvement |
+| p | MWPM | GNN | Improvement |
 |---|---|---|---|
 | 0.002 | 0.00301 | 0.00264 | 12.3% |
 | 0.003 | 0.00651 | 0.00562 | 13.7% |
@@ -39,7 +39,7 @@ trained at p ≤ 0.005):
 
 ![logical error rate vs physical error rate](results/final_comparison.png)
 
-## The idea
+## The idea behind this project
 
 A quantum computer cannot be read out mid-computation without destroying its state.
 The surface code works around this by measuring *stabilizers*: parity checks on groups
@@ -63,39 +63,18 @@ So the decoder is a binary classifier on a variable-size graph. Experiments wher
 detector fires produce no graph at all: they are predicted "no flip" without asking the
 network, and kept in the denominator so the numbers stay comparable with MWPM.
 
-## Implementation notes
 
-The message passing layer is written by hand, not taken from PyTorch Geometric:
+##Code structure
 
-```python
-messages = h[sources] * edge_weight.unsqueeze(-1)
-aggregated = torch.zeros_like(h)
-aggregated.index_add_(0, receivers, messages)
-return self.linear_self(h) + self.linear_neighbours(aggregated)
-```
+In this repository you can find the following scripts:
 
-This was checked to be numerically identical to `torch_geometric.nn.GraphConv`
-(max absolute difference 0.0) by copying the corresponding weight matrices.
-
-Four such layers (3 → 128 → 128 → 128 → 128) with ReLU, mean pooling over the nodes,
-then a three-layer MLP head to a single logit. 123,905 parameters.
-
-Training uses **fresh data every epoch** — `seed=None`, one million new experiments
-sampled from Stim each time — so the network never sees the same experiment twice and
-there is no train/test split to get wrong. The physical error rate is drawn per epoch
-from p ∈ {0.001 … 0.005}. Best validation error was reached at epoch 41 of 50.
-
-## Files
-
-| file | what it does |
-|---|---|
-| `generate_data.py` | builds the Stim circuit and samples detectors, observables, coordinates |
-| `baseline.py` | MWPM decoder via PyMatching, plus the "always predict 0" floor |
-| `create_graphs.py` | one experiment → one `torch_geometric` graph (kNN edges, 1/distance weights) |
-| `model.py` | hand-written message passing layer, mean pooling, GNN |
-| `trainer.py` | training loop with fresh data each epoch |
-| `evaluate.py` | logical error rate of a model, comparable with the baseline |
-| `evaluate_final.py` | both decoders on identical shots, McNemar test, curve over p |
+ `generate_data.py` | builds the Stim circuit and samples detectors, observables, coordinates 
+ `baseline.py` | MWPM decoder via PyMatching, plus the "always predict 0" floor 
+ `create_graphs.py` | one experiment → one `torch_geometric` graph (kNN edges, 1/distance weights) 
+ `model.py` | hand-written message passing layer, mean pooling, GNN 
+ `trainer.py` | training loop with fresh data each epoch 
+ `evaluate.py` | logical error rate of a model, comparable with the baseline 
+ `evaluate_final.py` | both decoders on identical shots, McNemar test, curve over p 
 
 ```bash
 pip install stim pymatching torch torch_geometric pandas matplotlib
@@ -104,9 +83,9 @@ python trainer.py           # ~50 epochs, writes results/best_model.pt
 python evaluate_final.py    # the numbers and the plot above
 ```
 
-## Caveats
+## Caveats and possible future works
 
-- Distance 3 only. The interesting regime for neural decoders is d ≥ 5, where the
+- The GNN works on distance 3 only. The interesting regime for neural decoders is d ≥ 5, where the
   matching graph gets harder and the gap reported in the literature widens.
 - Uniform circuit-level depolarising noise, so MWPM's noise model is *correct*; on real
   hardware it is not, which is where a data-driven decoder is expected to gain the most.
