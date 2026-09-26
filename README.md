@@ -38,7 +38,7 @@ p = 0.010. The overall performances, for different values of p, are here present
 | 0.007 | 0.03204 | 0.02930 | 8.5% |
 | 0.010 | 0.05928 | 0.05632 | 5.0% |
 
-![logical error rate vs physical error rate](results/final_results.png)
+![logical error rate vs physical error rate](results/improvement_plot.png)
 
 ## The idea behind this project
 
