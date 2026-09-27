@@ -85,7 +85,7 @@ python trainer.py           # ~50 epochs, writes results/best_model.pt
 python evaluate_final.py    # the numbers and the plot above
 ```
 
-## Caveats and possible future works
+## Caveats and possible future extensions
 
 - The GNN works on distance 3 only. The interesting regime for neural decoders is d ≥ 5, where the
   matching graph gets harder and the gap reported in the literature widens.
